@@ -66,3 +66,14 @@ def test_as_dataframe_transportation_bad_year():
     assert (e.type == HTTPError)
 
     return
+
+
+def test_as_dataframe_bad_database():
+    database = 'heating'
+
+    with pytest.raises(KeyError) as e:
+        df = as_dataframe(bad_year, database)
+
+    assert (e.type == KeyError)
+
+    return
