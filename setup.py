@@ -1,6 +1,8 @@
 import sys
 import os
 from setuptools import setup, find_packages
+
+from nrelpy.nrelpy.version import LONG_DESCRIPTION_CONTENT_TYPE
 PACKAGES = find_packages()
 
 # Get version and release info, which is all stored in shablona/version.py
@@ -25,6 +27,7 @@ opts = dict(name=NAME,
             maintainer_email=MAINTAINER_EMAIL,
             description=DESCRIPTION,
             long_description=LONG_DESCRIPTION,
+            long_description_content_type=LONG_DESCRIPTION_CONTENT_TYPE,
             url=URL,
             download_url=DOWNLOAD_URL,
             license=LICENSE,

@@ -37,6 +37,7 @@ MAINTAINER = "Samuel Dotson"
 MAINTAINER_EMAIL = "samgdotson@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
+LONG_DESCRIPTION_CONTENT_TYPE = 'text'
 URL = "http://github.com/samgdotson/nrelpy"
 DOWNLOAD_URL = ""
 LICENSE = "BSD-3"
