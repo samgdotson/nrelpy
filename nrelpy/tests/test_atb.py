@@ -1,0 +1,68 @@
+from nrelpy.atb import *
+import os
+import numpy
+import pandas
+import pytest
+
+good_year = 2020
+bad_year = -999
+nonexistent_year = 2000
+
+def test_as_dataframe_electricity_good_year():
+    type = 'electricity'
+
+    df = as_dataframe(good_year, type)
+
+    return
+
+
+def test_as_dataframe_electricity_bad_year():
+    type = 'electricity'
+
+    with pytest.raises(HTTPError) as e:
+        df = as_dataframe(bad_year, type)
+
+    assert (e.type == HTTPError)
+
+    return
+
+
+def test_as_dataframe_electricity_nonexistent():
+    type = 'electricity'
+
+    with pytest.raises(HTTPError) as e:
+        df = as_dataframe(nonexistent_year, type)
+
+    assert (e.type == HTTPError)
+
+    return
+
+
+def test_as_dataframe_transportation_good_year():
+    type = 'transportation'
+
+    df = as_dataframe(good_year, type)
+
+    return
+
+
+def test_as_dataframe_transportation_nonexistent():
+    type = 'transportation'
+
+    with pytest.raises(HTTPError) as e:
+        df = as_dataframe(nonexistent_year, type)
+
+    assert (e.type == HTTPError)
+
+    return
+
+
+def test_as_dataframe_transportation_bad_year():
+    type = 'transportation'
+
+    with pytest.raises(HTTPError) as e:
+        df = as_dataframe(bad_year, type)
+
+    assert (e.type == HTTPError)
+
+    return
