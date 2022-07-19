@@ -2,7 +2,7 @@ from urllib.error import HTTPError
 import pandas as pd
 
 
-def as_dataframe(year, type, verbose=False, **kwargs):
+def as_dataframe(year, database, verbose=False, **kwargs):
     """
     This function downloads the specified Annual Technology Baseline Dataset.
 
@@ -12,7 +12,7 @@ def as_dataframe(year, type, verbose=False, **kwargs):
         The ATB year
         * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
         * ATB Transportation (ATBt) accepts: [2020]
-    type : string
+    database : string
         The desired ATB dataset. Accepts: 'electricity', 'transportation'.
     
     Returns
@@ -24,13 +24,13 @@ def as_dataframe(year, type, verbose=False, **kwargs):
     atb_urls = {'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
                 'transportation':f"https://atb-archive.nrel.gov/transportation/{year}/files/{year}_ATB_Data_VehFuels_Download.xlsx"}
 
-    url = atb_urls[type]
+    url = atb_urls[database]
 
     try:
-        print(f'Downloading NREL ATB {type} from {year}')
-        if type == 'electricity':
+        print(f'Downloading NREL ATB {database} from {year}')
+        if database == 'electricity':
             df = pd.read_csv(url, low_memory=False)
-        elif type == 'transportation':
+        elif database == 'transportation':
             df = pd.read_excel(url, sheet_name='Joined Data for Levelized Calc')
         print('Download Successful.')
         drop_col = ['Unnamed: 0']

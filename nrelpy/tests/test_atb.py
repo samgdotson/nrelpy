@@ -9,18 +9,18 @@ bad_year = -999
 nonexistent_year = 2000
 
 def test_as_dataframe_electricity_good_year():
-    type = 'electricity'
+    database = 'electricity'
 
-    df = as_dataframe(good_year, type)
+    df = as_dataframe(good_year, database)
 
     return
 
 
 def test_as_dataframe_electricity_bad_year():
-    type = 'electricity'
+    database = 'electricity'
 
     with pytest.raises(HTTPError) as e:
-        df = as_dataframe(bad_year, type)
+        df = as_dataframe(bad_year, database)
 
     assert (e.type == HTTPError)
 
@@ -28,10 +28,10 @@ def test_as_dataframe_electricity_bad_year():
 
 
 def test_as_dataframe_electricity_nonexistent():
-    type = 'electricity'
+    database = 'electricity'
 
     with pytest.raises(HTTPError) as e:
-        df = as_dataframe(nonexistent_year, type)
+        df = as_dataframe(nonexistent_year, database)
 
     assert (e.type == HTTPError)
 
@@ -39,18 +39,18 @@ def test_as_dataframe_electricity_nonexistent():
 
 
 def test_as_dataframe_transportation_good_year():
-    type = 'transportation'
+    database = 'transportation'
 
-    df = as_dataframe(good_year, type)
+    df = as_dataframe(good_year, database)
 
     return
 
 
 def test_as_dataframe_transportation_nonexistent():
-    type = 'transportation'
+    database = 'transportation'
 
     with pytest.raises(HTTPError) as e:
-        df = as_dataframe(nonexistent_year, type)
+        df = as_dataframe(nonexistent_year, database)
 
     assert (e.type == HTTPError)
 
@@ -58,10 +58,10 @@ def test_as_dataframe_transportation_nonexistent():
 
 
 def test_as_dataframe_transportation_bad_year():
-    type = 'transportation'
+    database = 'transportation'
 
     with pytest.raises(HTTPError) as e:
-        df = as_dataframe(bad_year, type)
+        df = as_dataframe(bad_year, database)
 
     assert (e.type == HTTPError)
 
