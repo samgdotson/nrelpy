@@ -20,7 +20,7 @@ __version__ = '.'.join(map(str, _ver))
 CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Environment :: Console",
                "Intended Audience :: Science/Research",
-               "License :: OSI Approved :: BSD 3-Clause License",
+               "License :: OSI Approved :: BSD License",
                "Operating System :: OS Independent",
                "Programming Language :: Python",
                "Topic :: Scientific/Engineering"]
@@ -37,7 +37,7 @@ MAINTAINER = "Samuel Dotson"
 MAINTAINER_EMAIL = "samgdotson@gmail.com"
 DESCRIPTION = description
 LONG_DESCRIPTION = long_description
-LONG_DESCRIPTION_CONTENT_TYPE = 'text'
+LONG_DESCRIPTION_CONTENT_TYPE = 'text/plain'
 URL = "http://github.com/samgdotson/nrelpy"
 DOWNLOAD_URL = ""
 LICENSE = "BSD-3"

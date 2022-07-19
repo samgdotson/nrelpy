@@ -3,11 +3,9 @@ Simple API to interact with the National Renewable Energy Laboratory's Annual Te
 
 ### Installing
 
-This package is not currently available on the Python Package Index (PyPI) so 
+This package may be installed with 
 
-1. Clone or download the source code with `git clone <url>`.
-2. `pip install .` from the top-level `nrelpy` directory.
-3. For contributers, consider `pip install -e .`. 
+`pip install nrelpy`
 
 ### Using
 
@@ -24,7 +22,21 @@ database = 'electricity'
 df = ATB.as_dataframe(year=year, database=database)
 ```
 
-
 ### Testing
 
 From the top-level `nrelpy` directory, run `pytest`.  
+
+
+### Contributing
+
+Contributors should clone the repository and install an editable installation.
+
+```bash
+git clone https://github.com/samgdotson/nrelpy.git
+
+cd nrelpy
+
+pip install -e .
+```
+
+Issues and feature requests are welcome.
