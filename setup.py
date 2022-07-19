@@ -2,7 +2,6 @@ import sys
 import os
 from setuptools import setup, find_packages
 
-from nrelpy.nrelpy.version import LONG_DESCRIPTION_CONTENT_TYPE
 PACKAGES = find_packages()
 
 # Get version and release info, which is all stored in shablona/version.py
