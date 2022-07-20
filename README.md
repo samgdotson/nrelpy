@@ -3,7 +3,7 @@ Simple API to interact with the National Renewable Energy Laboratory's Annual Te
 
 ### Installing
 
-This package may be installed with 
+This package may be installed from [PyPI](https://pypi.org/project/nrelpy/) with 
 
 `pip install nrelpy`
 
