@@ -1,5 +1,28 @@
 from urllib.error import HTTPError
 import pandas as pd
+import platformdirs
+import dill
+
+
+def check_stored_data(year, database):
+    """
+    This function checks for locally saved databases.
+
+    Parameters
+    ----------
+    year : int
+        The ATB year
+        * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
+        * ATB Transportation (ATBt) accepts: [2020]
+    database : string
+        The desired ATB dataset. Accepts: 'electricity', 'transportation'.
+
+    Returns
+    -------
+    """
+    df = None
+
+    return df
 
 
 def as_dataframe(year, database, verbose=False, **kwargs):
