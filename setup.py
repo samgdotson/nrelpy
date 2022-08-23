@@ -2,6 +2,8 @@ import sys
 import os
 from setuptools import setup, find_packages
 
+from pygenesys.setup import ENTRY_POINTS
+
 PACKAGES = find_packages()
 
 # Get version and release info, which is all stored in shablona/version.py
@@ -9,7 +11,7 @@ ver_file = os.path.join('nrelpy', 'version.py')
 with open(ver_file) as f:
     exec(f.read())
 
-
+ENTRY_POINTS = {}
 
 # Give setuptools a hint to complain if it's too old a version
 # 24.2.0 added the python_requires option
