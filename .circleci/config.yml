@@ -24,6 +24,9 @@ jobs:
       - python/install-packages:
           pkg-manager: pip
       - run:
+          name: "install nrelpy"
+          command: pip install nrelpy
+      - run:
           name: "pytest"
           command: pytest
 
