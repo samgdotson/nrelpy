@@ -9,8 +9,9 @@ def as_dataframe(verbose=False, **kwargs):
     This function downloads the specified Annual Technology Baseline Dataset.
     If this data is used in a research publication, users should cite:
 
-    >>>Lopez, A. et al. (2012). "U.S. Renewable Energy Technical Potentials: A GIS-Based Analysis." 
-    NREL/TP-6A20-51946. Golden, CO: National Renewable Energy Laboratory.
+    CITE: Lopez, A. et al. (2012). "U.S. Renewable Energy Technical Potentials: 
+    A GIS-Based Analysis." NREL/TP-6A20-51946. Golden, CO: National Renewable 
+    Energy Laboratory.
     
     Returns
     -------
