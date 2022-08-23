@@ -1,6 +1,14 @@
 # nrelpy
 Simple API to interact with the National Renewable Energy Laboratory's Annual Technology Baseline
 
+## Features and Datasets
+
+`nrelpy` currently enables access to the following datasets:
+* Annual Technology Baseline
+    - Transportation (2020)
+    - Electricity (2019 - 2022)
+* GIS Renewable Energy Potential (state-level resolution)
+
 ### Installing
 
 This package may be installed from [PyPI](https://pypi.org/project/nrelpy/) with 
@@ -13,6 +21,9 @@ The motivation for this API is to relieve researchers of the need to carry datas
 in their repositories. Therefore, the most basic function of `nrelpy` returns a 
 dataset as a pandas dataframe. This basic usage is shown below.
 
+
+#### ATB
+
 ```py
 import nrelpy.atb as ATB
 
@@ -20,6 +31,14 @@ year = 2022
 database = 'electricity'
 
 df = ATB.as_dataframe(year=year, database=database)
+```
+
+#### Renewable Potential
+
+```py
+import nrelpy.re_potential as REP
+
+df = REP.as_dataframe()
 ```
 
 ### Testing
@@ -38,5 +57,7 @@ cd nrelpy
 
 pip install -e .
 ```
+
+*All pull requests must include appropriate, passing, tests.*
 
 Issues and feature requests are welcome.
