@@ -2,8 +2,6 @@ import sys
 import os
 from setuptools import setup, find_packages
 
-from pygenesys.setup import ENTRY_POINTS
-
 PACKAGES = find_packages()
 
 # Get version and release info, which is all stored in shablona/version.py
