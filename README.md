@@ -1,3 +1,4 @@
+![Build Status](https://github.com/samgdotson/nrelpy/actions/workflows/python-app.yml/badge.svg?branch=main)
 # nrelpy
 Simple API to interact with the National Renewable Energy Laboratory's Annual Technology Baseline
 
