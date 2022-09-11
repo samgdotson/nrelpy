@@ -46,6 +46,14 @@ df = REP.as_dataframe()
 
 From the top-level `nrelpy` directory, run `pytest`.  
 
+You can also check the testing coverage with
+
+```bash
+pytest --cov-config=.coveragerc --cov=nrelpy
+coverage html
+```
+`coverage html` creates a nicely formatted html page with 
+the entire coverage report. Simply open the `htmlcov/index.html` file in your browser.
 
 ### Contributing
 

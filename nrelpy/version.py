@@ -26,10 +26,10 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
                "Topic :: Scientific/Engineering"]
 
 # Description should be a one-liner:
-description = "nrelpy: A tool for generating energy systems with python"
+description = "nrelpy: A tool for accessing NREL's rich library of data."
 # Long description will go up on the pypi page
 long_description = """
-Simple API to interact with NREL's Annual Technology Baseline
+Simple API to interact with NREL's Annual Technology Baseline (ATB) and other datasets.
 """
 
 NAME = "nrelpy"
@@ -49,5 +49,12 @@ MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
 PACKAGE_DATA = {'nrelpy': [pjoin('data', '*')]}
-REQUIRES = ['numpy', 'pandas', 'matplotlib', 'pytest', 'dill', 'openpyxl']
+REQUIRES = [
+    'numpy',
+    'pandas',
+    'matplotlib',
+    'pytest',
+    'dill',
+    'openpyxl',
+    'pathlib']
 PYTHON_REQUIRES = ">= 3.6"

@@ -4,3 +4,4 @@ matplotlib
 dill
 pytest
 openpyxl
+pathlib
