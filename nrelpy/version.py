@@ -49,5 +49,12 @@ MINOR = _version_minor
 MICRO = _version_micro
 VERSION = __version__
 PACKAGE_DATA = {'nrelpy': [pjoin('data', '*')]}
-REQUIRES = ['numpy', 'pandas', 'matplotlib', 'pytest', 'dill', 'openpyxl', 'pathlib']
+REQUIRES = [
+    'numpy',
+    'pandas',
+    'matplotlib',
+    'pytest',
+    'dill',
+    'openpyxl',
+    'pathlib']
 PYTHON_REQUIRES = ">= 3.6"

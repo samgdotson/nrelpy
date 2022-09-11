@@ -15,18 +15,19 @@ def as_dataframe(year, database, verbose=False, **kwargs):
         * ATB Transportation (ATBt) accepts: [2020]
     database : string
         The desired ATB dataset. Accepts: 'electricity', 'transportation'.
-    
+
     Returns
     -------
     df : pandas.DataFrame
         The ATB data as a pandas dataframe.
     """
-    
+
     try:
         df = check_stored_data(database=database, year=year)
     except FileNotFoundError:
-        atb_urls = {'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
-                    'transportation':f"https://atb-archive.nrel.gov/transportation/{year}/files/{year}_ATB_Data_VehFuels_Download.xlsx"}
+        atb_urls = {
+            'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
+            'transportation': f"https://atb-archive.nrel.gov/transportation/{year}/files/{year}_ATB_Data_VehFuels_Download.xlsx"}
 
         url = atb_urls[database]
 
@@ -35,7 +36,8 @@ def as_dataframe(year, database, verbose=False, **kwargs):
             if database == 'electricity':
                 df = pd.read_csv(url, low_memory=False)
             elif database == 'transportation':
-                df = pd.read_excel(url, sheet_name='Joined Data for Levelized Calc')
+                df = pd.read_excel(
+                    url, sheet_name='Joined Data for Levelized Calc')
             print('Download Successful.')
             drop_col = ['Unnamed: 0']
             if verbose:
