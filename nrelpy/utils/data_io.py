@@ -2,9 +2,11 @@ import dill
 from pathlib import Path
 import pandas as pd
 import glob
+import os
 
-
-DATA_PATH = Path('..').resolve() / 'data'
+# curr_dir = Path().absolute()
+curr_dir_os = Path(os.path.dirname(os.path.abspath(__file__)))
+DATA_PATH = (curr_dir_os / Path('..')).resolve() / 'data'
 DATA_PATH.mkdir(exist_ok=True)
 
 db_opts = {'electricity': 'ATBe',
