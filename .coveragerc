@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = nrelpy
+omit =
+    test/*
+    setup.py
+    nrelpy/version.py
