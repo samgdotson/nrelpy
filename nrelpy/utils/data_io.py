@@ -18,13 +18,13 @@ def check_stored_data(database, year=None, path=None, pickled=True):
 
     Parameters
     ----------
+    database : string
+        The desired ATB dataset. Accepts: 'electricity', 'transportation',
+        'potential'.
     year : int
         The ATB year
         * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
         * ATB Transportation (ATBt) accepts: [2020]
-    database : string
-        The desired ATB dataset. Accepts: 'electricity', 'transportation',
-        'potential'.
     path : string or Path-like
         Users may specify where NRELPy should look for data.
 
@@ -94,11 +94,9 @@ def save_local(df, database, year=None, path=None, pickle=True):
         file_name = f'{db_opts[database]}_{str(year)}'
     else:
         file_name = f'{db_opts[database]}'
-
     if path:
         file_path = Path(path).resolve()
     else:
-        # file_path = make_data_folder()
         file_path = DATA_PATH
 
     if pickle:
@@ -108,6 +106,8 @@ def save_local(df, database, year=None, path=None, pickle=True):
         df.to_csv(file_path / f'{file_name}.csv')
     else:
         raise ValueError(f"Data is type {type(df)}. Save method unknown.")
+
+    return
 
 
 if __name__ == '__main__':
