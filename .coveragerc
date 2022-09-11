@@ -2,6 +2,8 @@
 branch = True
 source = nrelpy
 omit =
-    test/*
+    nrelpy/tests/*
+    nrelpy/__init__.py
+    nrelpy/**/__init__.py
     setup.py
     nrelpy/version.py
