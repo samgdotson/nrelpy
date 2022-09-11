@@ -111,20 +111,6 @@ def save_local(df, database, year=None, path=None, pickle=True):
 
 
 if __name__ == '__main__':
-
-    data = {'tech': ['nuclear', 'solar', 'wind', 'naturalgas'],
-            'variable_cost': [20, 0, 0, 180],  # $/GWh
-            'fixed_cost': [92, 4, 11, 21],
-            'capital_cost': [5.9, 0.8, 1.4, 1.0],
-            'capacity_GW': [12, 3, 7, 5],
-            'capacity_factor': [0.93, 0.17, 0.33, 0.45],
-            'resentment': [100, 20, 50, 70]
-            }
-    tech_df = pd.DataFrame(data)
-
-    # make_data_folder()
-    # mydata = range(10)
-
     db = 'electricity'
     yr = 2022
 
