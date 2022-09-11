@@ -54,9 +54,10 @@ def check_stored_data(database, year=None, path=None, pickled=True):
         if pickled:
             df = pd.read_pickle(file_match[0])
         else:
-            df = pd.read_csv(file_match[0])
+            df = pd.read_csv(file_match[0], index_col=[0])
     elif len(file_match) == 0:
-        return
+        raise FileNotFoundError(
+            f"{file_name} file not found.")
     else:
         raise NameError(
             f"{file_name} returned multiple copies. Handling method unspecified. \n {file_match}")
@@ -108,12 +109,3 @@ def save_local(df, database, year=None, path=None, pickle=True):
         raise ValueError(f"Data is type {type(df)}. Save method unknown.")
 
     return
-
-
-if __name__ == '__main__':
-    db = 'electricity'
-    yr = 2022
-
-    # save_local(tech_df, database=db, year=yr, pickle=False)
-
-    print(check_stored_data(database=db, year=yr))

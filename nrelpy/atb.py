@@ -1,5 +1,6 @@
 from urllib.error import HTTPError
 import pandas as pd
+from nrelpy.utils.data_io import check_stored_data, save_local
 
 
 def as_dataframe(year, database, verbose=False, **kwargs):
@@ -20,32 +21,37 @@ def as_dataframe(year, database, verbose=False, **kwargs):
     df : pandas.DataFrame
         The ATB data as a pandas dataframe.
     """
-
-    atb_urls = {'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
-                'transportation':f"https://atb-archive.nrel.gov/transportation/{year}/files/{year}_ATB_Data_VehFuels_Download.xlsx"}
-
-    url = atb_urls[database]
-
+    
     try:
-        print(f'Downloading NREL ATB {database} from {year}')
-        if database == 'electricity':
-            df = pd.read_csv(url, low_memory=False)
-        elif database == 'transportation':
-            df = pd.read_excel(url, sheet_name='Joined Data for Levelized Calc')
-        print('Download Successful.')
-        drop_col = ['Unnamed: 0']
-        if verbose:
-            print(f"Dropping column {drop_col}")
+        df = check_stored_data(database=database, year=year)
+    except FileNotFoundError:
+        atb_urls = {'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
+                    'transportation':f"https://atb-archive.nrel.gov/transportation/{year}/files/{year}_ATB_Data_VehFuels_Download.xlsx"}
+
+        url = atb_urls[database]
+
         try:
-            df.drop(columns=drop_col, inplace=True)
-        except KeyError as err:
+            print(f'Downloading NREL ATB {database} from {year}')
+            if database == 'electricity':
+                df = pd.read_csv(url, low_memory=False)
+            elif database == 'transportation':
+                df = pd.read_excel(url, sheet_name='Joined Data for Levelized Calc')
+            print('Download Successful.')
+            drop_col = ['Unnamed: 0']
             if verbose:
-                print(f'No column {drop_col}.')
-            else:
-                pass
-    except HTTPError as err:
-        fail_str = (f'Failed to download from URL: {url}.')
-        print(err.code, fail_str)
-        raise
+                print(f"Dropping column {drop_col}")
+            try:
+                df.drop(columns=drop_col, inplace=True)
+            except KeyError as err:
+                if verbose:
+                    print(f'No column {drop_col}.')
+                else:
+                    pass
+        except HTTPError as err:
+            fail_str = (f'Failed to download from URL: {url}.')
+            print(err.code, fail_str)
+            raise
+
+        save_local(df, database=database, year=year)
 
     return df
