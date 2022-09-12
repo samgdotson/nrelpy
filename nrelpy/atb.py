@@ -145,6 +145,10 @@ class ATBe(object):
             technology selection. For example, `LandbasedWind`
             has data for multiple wind classes (e.g. `Class9`).
             This must be specified in order to distinguish values.
+        value_only : boolean
+            An optional parameter that indicates whether the
+            value is returned as a Unyt object or as the value
+            only. Default is True.
         """
 
         self.dataframe
