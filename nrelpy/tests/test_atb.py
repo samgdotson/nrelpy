@@ -79,7 +79,7 @@ def test_as_dataframe_bad_database():
 
 def test_ATB_init():
 
-    atb_class = ATB(year=2022)
+    atb_class = ATBe(year=2022)
 
     assert atb_class.scenario == 'Moderate'
     assert atb_class.case == 'R&D'
