@@ -28,16 +28,12 @@ CLASSIFIERS = ["Development Status :: 3 - Alpha",
 # Description should be a one-liner:
 description = "nrelpy: A tool for accessing NREL's rich library of data."
 # Long description will go up on the pypi page
-long_description = """
-Simple API to interact with NREL's Annual Technology Baseline (ATB) and other datasets.
-"""
 
 NAME = "nrelpy"
 MAINTAINER = "Samuel Dotson"
 MAINTAINER_EMAIL = "samgdotson@gmail.com"
 DESCRIPTION = description
-LONG_DESCRIPTION = long_description
-LONG_DESCRIPTION_CONTENT_TYPE = 'text/plain'
+LONG_DESCRIPTION_CONTENT_TYPE = 'text/markdown'
 URL = "http://github.com/samgdotson/nrelpy"
 DOWNLOAD_URL = ""
 LICENSE = "BSD-3"

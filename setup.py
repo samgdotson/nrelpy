@@ -18,6 +18,9 @@ SETUP_REQUIRES = ['setuptools >= 24.2.0']
 # This enables setuptools to install wheel on-the-fly
 SETUP_REQUIRES += ['wheel'] if 'bdist_wheel' in sys.argv else []
 
+with open("README.md", encoding="utf-8") as f:
+    LONG_DESCRIPTION = f.read()
+
 opts = dict(name=NAME,
             maintainer=MAINTAINER,
             maintainer_email=MAINTAINER_EMAIL,
