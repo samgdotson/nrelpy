@@ -1,5 +1,6 @@
 from urllib.error import HTTPError
 import pandas as pd
+import numpy as np
 from nrelpy.utils.data_io import check_stored_data, save_local
 
 
@@ -71,7 +72,7 @@ class ATBe(object):
             database='electricity',
             case='R&D',
             scenario='Moderate',
-            crp = '20',
+            crp='20',
             **kwargs) -> None:
         """
         Initializes the ATB class.
@@ -81,18 +82,18 @@ class ATBe(object):
         year : int
             Specifies the ATB year
         database : string
-            Specifies which ATB database. 
+            Specifies which ATB database.
             Accepts ['electricity', 'transportation']
             Default is 'electricity'.
         case : string
-            Specifies the technology case. 
+            Specifies the technology case.
             Accepts ['Market', 'R&D']
         scenario : string
-            Specifies the technology scenario. 
+            Specifies the technology scenario.
             Accepts ['Conservative', 'Moderate', 'Advanced']
         crp : string or int
             `crp` stands for "cost recovery period." This parameter only
-            influences the levelized cost of electricity (LCOE) 
+            influences the levelized cost of electricity (LCOE)
             calculation. Default is 20 years.
         """
 
@@ -102,14 +103,13 @@ class ATBe(object):
         self.scenario = scenario
         self.crp = crp
 
-
     @property
     def dataframe(self):
         """
         Creates a subset of the ATBe according to the settings
         stored as class attributes. Updates whenever a setting
         is changed.
-        
+
         >>> atbe = ATBe(2022)
         >>> print(atbe.dataframe.scenario.unique())
         ['Moderate']
@@ -123,41 +123,75 @@ class ATBe(object):
                 (df.crpyears) == str(self.crp)]
         return df
 
+    @property
+    def available_tech(self):
+        """
+        The list of available technologies for the current ATBe.
+        """
 
-    def get_data(self, 
-                technology, 
-                core_metric_param, 
-                techdetail,
-                value_only=True):
+        return np.sort(self.dataframe.technology.unique())
+
+    @property
+    def available_metric(self):
+        """
+        The list of available metrics for the current ATBe.
+        """
+
+        return np.sort(self.dataframe.core_metric_parameter.unique())
+
+    def get_data(self,
+                 technology,
+                 core_metric_param,
+                 techdetail,
+                 projection_year=2020,
+                 value_only=True):
         """
         Retrieves a specific piece of technology data.
 
         Parameters
         ----------
         technology : string
-            Specifies the technology. 
+            Specifies the technology.
         core_metric_param : string
             The parameter of interest.
-            Accepts ['CAPEX', 'Fixed O&M', 'Variable O&M', 
+            Accepts ['CAPEX', 'Fixed O&M', 'Variable O&M',
                     'Fuel', 'CF', 'LCOE']
         techdetail : string
             A more descriptive parameter to narrow down
             technology selection. For example, `LandbasedWind`
             has data for multiple wind classes (e.g. `Class9`).
             This must be specified in order to distinguish values.
+        projection_year : int or list of int
+            The desired data year or set of years.
         value_only : boolean
             An optional parameter that indicates whether the
             value is returned as a Unyt object or as the value
             only. Default is True.
+
+        Returns
+        -------
+        datum : unyt.Quantity or float
+            The technology datum of interest
         """
 
-        self.dataframe
+        tech_fail_str = (f"{technology} not in list of available techs. \n" +       
+                        f"Try one of {self.available_tech}")
+        param_fail_str = (f"{core_metric_param} not in list of metrics. \n" +
+                        f"Try one of {self.available_metric}")
+        assert technology in self.available_tech, tech_fail_str
+        assert core_metric_param in self.available_metric, param_fail_str
 
+        detail_mask = self.dataframe['techdetail'] == techdetail
+        detail_list = self.dataframe[detail_mask]
+        
+        
+        
+
+        return
 
 
 if __name__ == "__main__":
 
-    
     year = 2022
     atb_class = ATBe(year=2022)
 
