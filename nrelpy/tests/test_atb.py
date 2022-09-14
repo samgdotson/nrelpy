@@ -6,6 +6,13 @@ good_year = 2020
 bad_year = -999
 nonexistent_year = 2000
 
+good_tech = 'Nuclear'
+good_detail = 'NuclearSMR'
+good_metric = 'CAPEX'
+bad_tech = 'Dark Matter Engine'
+bad_detail = 'PlanetExpress'
+bad_metric = 'Kajiggers'
+
 def test_as_dataframe_electricity_good_year():
     database = 'electricity'
 
@@ -99,4 +106,18 @@ def test_ATB_scenario_change():
     atb_class.case = 'Market'
     assert atb_class.dataframe.scenario.unique() == ['Advanced']
     assert atb_class.dataframe.core_metric_case.unique() == ['Market']
+
+
+
+atb_class = ATBe(year=2022)
+def test_ATB_get_data_good_values():
+    exp_value = 7988.95108
+    actual_value = atb_class.get_data(good_tech, good_metric, good_detail)
+    assert (abs(exp_value - actual_value) < 1e-5)
+
+def test_ATB_get_data_bad_values():
+    with pytest.raises(AssertionError):
+        atb_class.get_data(bad_tech, good_metric, good_detail)
+        atb_class.get_data(good_tech, bad_metric, good_detail)
+        atb_class.get_data(good_tech, good_metric, bad_detail)
 
