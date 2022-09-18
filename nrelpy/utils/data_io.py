@@ -4,7 +4,6 @@ import pandas as pd
 import glob
 import os
 
-# curr_dir = Path().absolute()
 curr_dir_os = Path(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = (curr_dir_os / Path('..')).resolve() / 'data'
 DATA_PATH.mkdir(exist_ok=True)
