@@ -1,30 +1,82 @@
 import numpy as np
-import sys, os
+import sys
+import os
 import pandas as pd
 
-key = "AA2HOHgCybRhhfT9bhueoG1ZpXWAN7I6cIoyduFx"
 
-personal_data = {'api_key':key,
-                 'name':'Samuel+G+Dotson',
-                 'reason':'Research',
-                 'affiliation':'University+of+Illinois+at+Urbana+Champaign',
-                 'email':'sgd2@illinois.edu',
-                 'mailing_list':'false'}
+with open("C:/Users/samgd/Research/nrel_api_key.txt", 'r') as file:
+    key = file.readlines()[0]
 
-parameters = {'lat':40.09,
-              'lon':-88.26,
-              'year':2019,
-              'leap_day':'true',
-              'selector':'POINT',
-              'utc':'false',
-              'interval':'30',
-              'attr_list':['ghi',
-                           'dhi',
-                        #    'wind_speed',
-                        #    'air_temperature',
-                        #    'relative_humidity',
-                        #    'surface_pressure'
-                           ]}
+PERSONAL_DATA = {'api_key': None,
+                 'name': None,
+                 'reason': None,
+                 'affiliation': None,
+                 'email': None,
+                 'mailing_list': None}
+
+PARAMETERS = {'lat': None,
+              'lon': None,
+              'year': None,
+              'leap_day': None,
+              'selector': None,
+              'utc': None,
+              'interval': None,
+              'attr_list': None}
+
+AVAILABLE_ATTRIBUTES = {
+    "solar": [
+        "air_temperature",
+        "clearsky_dhi",
+        "clearsky_dni",
+        "clearsky_ghi",
+        "cloud_type",
+        "dew_point",
+        "dhi",
+        "dni",
+        "fill_flag",
+        "ghi",
+        "ghuv-280-400",
+        "ghuv-285-385",
+        "relative_humidity",
+        "solar_zenith_angle",
+        "surface_albedo",
+        "surface_pressure",
+        "total_precipitable_water",
+        "wind_direction",
+        "wind_speed"],
+    "wind": [
+        "pressure_0m",
+        "pressure_100m",
+        'pressure_200m',
+        "relativehumidity_2m",
+        "precipitationrate_0m",
+        "windspeed_10m",
+        "windspeed_40m",
+        "windspeed_60m",
+        "windspeed_80m",
+        "windspeed_100m",
+        "windspeed_120m",
+        "windspeed_140m",
+        "windspeed_160m",
+        "windspeed_200m",
+        "winddirection_10m",
+        "winddirection_40m",
+        "winddirection_60m",
+        "winddirection_80m",
+        "winddirection_100m",
+        "winddirection_120m",
+        "winddirection_140m",
+        "winddirection_160m",
+        "winddirection_200m",
+        "temperature_10m",
+        "temperature_40m",
+        "temperature_60m",
+        "temperature_80m",
+        "temperature_100m",
+        "temperature_120m",
+        "temperature_140m",
+        "temperature_160m",
+        "temperature_200m"]}
 
 
 def make_wkt(selector, lat, lon):
@@ -52,8 +104,8 @@ def make_wkt(selector, lat, lon):
 
     if method == 'POINT':
         wkt = '{method}({lat}%20{lon})'.format(method=method,
-                                               lon = lon,
-                                               lat = lat)
+                                               lon=lon,
+                                               lat=lat)
     else:
         try:
             combinations = [f'{i}%20{j}' for i, j in zip(lon, lat)]
@@ -61,12 +113,12 @@ def make_wkt(selector, lat, lon):
             "Longitude and Latitudes are different sizes."
         coord_list = ('%2C').join(combinations)
         wkt = "{method}({coordinates})".format(method=method,
-                                                             coordinates=coord_list)
+                                               coordinates=coord_list)
 
     return wkt
 
 
-def make_csv_url(parameters, personal_data, kind='solar'):
+def make_nrel_url(parameters, personal_data, kind='solar', format="csv"):
     """
     This function generates a url to access renewable energy
     data through the NREL API. This function requires your
@@ -107,6 +159,14 @@ def make_csv_url(parameters, personal_data, kind='solar'):
         Indicates what kind of data should be downloaded. Currently
         accepts 'solar' or 'wind.' Default is 'solar'.
 
+    format : string
+        Indicates data download format. Accepts either 'csv' or
+        'json' strings. Default is 'csv.'
+
+    .. warning:
+        Only a json format allows simultaneous download of many locations
+        and years simultaneously.
+
     Returns
     -------
     url : string
@@ -122,53 +182,119 @@ def make_csv_url(parameters, personal_data, kind='solar'):
                    parameters['lat'])
 
     name = personal_data['name'].replace(' ', '+')
-    affiliation = personal_data['affiliation'].replace(' ', '+')
-    reason=personal_data['reason'].replace(' ', '+')
-    attributes = (',').join(parameters['attr_list'])
-    leap_day = str(parameters['leap_day']).lower()
-    year = int(parameters['year'])
-    interval = int(parameters['interval'])
-    utc = str(parameters['utc']).lower()
-    mailing_list = str(personal_data['mailing_list']).lower()
     email = personal_data['email']
     key = personal_data['api_key']
+    affiliation = personal_data['affiliation'].replace(' ', '+')
+    reason = personal_data['reason'].replace(' ', '+')
+    mailing_list = str(personal_data['mailing_list']).lower()
 
-    url = ("https://developer.nrel.gov/{db}.csv?wkt={wkt}&names={year}"
-           "&leap_day={leap}&interval={interval}&utc={utc}&full_name={name}"
-           "&email={email}&affiliation={affiliation}&mailing_list={mailing_list}"
-           "&reason={reason}&api_key={api}&attributes={attr}").format(db=db_to_access,
-                                                                      wkt=wkt,
-                                                                      year=year,
-                                                                      leap=leap_day,
-                                                                      interval=interval,
-                                                                      utc=utc,
-                                                                      name=name,
-                                                                      email=email,
-                                                                      affiliation=affiliation,
-                                                                      mailing_list=mailing_list,
-                                                                      reason=reason,
-                                                                      api=key,
-                                                                      attr=attributes)
+    attributes = (',').join(parameters['attr_list'])
+    leap_day = str(parameters['leap_day']).lower()
+    if isinstance(parameters['year'], int):
+        year = parameters['year']
+    elif isinstance(parameters['year'], float):
+        year = int(parameters['year'])
+    elif isinstance(parameters['year'], list):
+        years = [str(int(y)) for y in parameters['year']]
+        year = (',').join(years)
+    interval = int(parameters['interval'])
+    utc = str(parameters['utc']).lower()
+
+    # url = ("https://developer.nrel.gov/{db}.{format}?wkt={wkt}&names={year}"
+    #        "&leap_day={leap}&interval={interval}&utc={utc}&full_name={name}"
+    #        "&email={email}&affiliation={affiliation}&mailing_list={mailing_list}"
+    #        "&reason={reason}&api_key={api}&attributes={attr}").format(db=db_to_access,
+    #                                                                   wkt=wkt,
+    #                                                                   year=year,
+    #                                                                   leap=leap_day,
+    #                                                                   interval=interval,
+    #                                                                   utc=utc,
+    #                                                                   name=name,
+    #                                                                   email=email,
+    #                                                                   affiliation=affiliation,
+    #                                                                   mailing_list=mailing_list,
+    #                                                                   reason=reason,
+    #                                                                   api=key,
+    #                                                                   attr=attributes,
+    #                                                                   format=format)
+
+    url = (
+        f"https://developer.nrel.gov/{db_to_access}.{format}?wkt={wkt}&names={year}"
+        f"&leap_day={leap_day}&interval={interval}&utc={utc}&full_name={name}"
+        f"&email={email}&affiliation={affiliation}&mailing_list={mailing_list}"
+        f"&reason={reason}&api_key={key}&attributes={attributes}")
 
     return url
 
 
-if __name__ == "__main__":
-    parameters['attr_list'] = ['windspeed_80m','windspeed_100m']
-    years = [2010,2011,2012]
+def get_nrel_data(
+        lat,
+        lon,
+        years,
+        database,
+        parameters=PARAMETERS,
+        personal_data=PERSONAL_DATA):
+    """
+    This function collects data using NREL's data API.
+
+    Parameters
+    ----------
+    lat : float, list of float
+        The latitude(s) of the location(s) of interest.
+    lon : float, list of float
+        The longitude(s) of the location(s) of interest.
+    years : int, list of int
+        The years of data to be downloaded.
+    database : str
+        Database of interest. Accepts ['solar', 'wind'].
+    parameters : dict
+        The parameters that indicate a unique data request.
+    personal_data : dict
+        The dictionary of personal data.
+    """
     frames = []
-    for y in years:
-        print(f'getting year {y}')
+    for y in list(years):
         parameters['year'] = y
-        url = make_csv_url(parameters=parameters, 
-                            personal_data=personal_data, 
-                            kind='wind')
-        df = pd.read_csv(url, skiprows=1)
-        cols=['Year','Month', 'Day', 'Hour', 'Minute']
+        url = make_nrel_url(parameters=parameters,
+                            personal_data=personal_data,
+                            kind=database)
+        if database == 'solar':
+            df = pd.read_csv(url, skiprows=2)
+        elif database == 'wind':
+            df = pd.read_csv(url, skiprows=1)
+        # breakpoint()
+        cols = ['Year', 'Month', 'Day', 'Hour', 'Minute']
         df['time'] = pd.to_datetime(df[cols])
         df.drop(columns=cols, inplace=True)
         df.set_index('time', inplace=True)
         frames.append(df)
     full_df = pd.concat(frames, axis=0)
 
-    print(full_df)
+    return full_df
+
+
+if __name__ == "__main__":
+    PERSONAL_DATA = {
+        'api_key': key,
+        'name': 'Samuel+G+Dotson',
+        'reason': 'Research',
+        'affiliation': 'University+of+Illinois+at+Urbana+Champaign',
+        'email': 'sgd2@illinois.edu',
+        'mailing_list': 'false'}
+    PARAMETERS = {'lat': 40.09,
+                  'lon': -88.26,
+                  'year': 2019,
+                  'leap_day': 'true',
+                  'selector': 'POINT',
+                  'utc': 'false',
+                  'interval': '30',
+                  'attr_list': ['ghi',
+                                'dhi',
+                                ]}
+    years = [2010, 2011, 2012]
+
+    db = 'wind'
+    PARAMETERS['attr_list'] = AVAILABLE_ATTRIBUTES[db]
+    df = get_nrel_data(40.09, -88.26, years, db, PARAMETERS, PERSONAL_DATA)
+
+    df.to_csv(f'../data//nrel_data_{db}.csv')

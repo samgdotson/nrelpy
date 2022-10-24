@@ -4,7 +4,6 @@ import pandas as pd
 import glob
 import os
 
-# curr_dir = Path().absolute()
 curr_dir_os = Path(os.path.dirname(os.path.abspath(__file__)))
 DATA_PATH = (curr_dir_os / Path('..')).resolve() / 'data'
 DATA_PATH.mkdir(exist_ok=True)
@@ -12,6 +11,27 @@ DATA_PATH.mkdir(exist_ok=True)
 db_opts = {'electricity': 'ATBe',
            'transportation': 'ATBt',
            're_potential': 'NREL_REP'}
+
+
+def generate_db_filename(database, year=None):
+    """
+    This function creates a unique filename for a given database.
+
+    database : string
+        The desired ATB dataset. Accepts: 'electricity', 'transportation',
+        'potential'.
+    year : int
+        The ATB year
+        * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
+        * ATB Transportation (ATBt) accepts: [2020]
+    """
+    if year:
+        file_name = f'{db_opts[database]}_{str(year)}'
+    else:
+        file_name = f'{db_opts[database]}'
+    
+
+    return file_name
 
 
 def check_stored_data(database, year=None, path=None, pickled=True):
