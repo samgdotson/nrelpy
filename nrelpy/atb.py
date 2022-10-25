@@ -1,6 +1,8 @@
 from urllib.error import HTTPError
 import pandas as pd
-from nrelpy.utils.data_io import check_stored_data, save_local
+from nrelpy.utils.data_io import (check_stored_data, 
+                                save_local, 
+                                generate_db_filename)
 
 
 def as_dataframe(year, database, verbose=False, **kwargs):

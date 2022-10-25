@@ -13,7 +13,7 @@ db_opts = {'electricity': 'ATBe',
            're_potential': 'NREL_REP'}
 
 
-def generate_db_filename(database, year=None):
+def generate_db_filename(database, year=None, ext='csv'):
     """
     This function creates a unique filename for a given database.
 
@@ -24,47 +24,33 @@ def generate_db_filename(database, year=None):
         The ATB year
         * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
         * ATB Transportation (ATBt) accepts: [2020]
+    ext : string
+        The file extension. Common extensions include 'pkl' or 'csv'.
     """
     if year:
-        file_name = f'{db_opts[database]}_{str(year)}'
+        file_name = f'{db_opts[database]}_{str(year)}.{ext}'
     else:
-        file_name = f'{db_opts[database]}'
+        file_name = f'{db_opts[database]}.{ext}'
     
 
     return file_name
 
 
-def check_stored_data(database, year=None, path=None, pickled=True):
+def check_stored_data(file_name, path=None, pickled=True):
     """
-    This function checks for locally saved databases.
+    This function checks for locally saved databases. Assumes the data
+    is readable as a :class:`pandas.DataFrame`.
 
     Parameters
     ----------
-    database : string
-        The desired ATB dataset. Accepts: 'electricity', 'transportation',
-        'potential'.
-    year : int
-        The ATB year
-        * ATB Electricity (ATBe) accepts: [2019,2022] -- inclusive
-        * ATB Transportation (ATBt) accepts: [2020]
     path : string or Path-like
         Users may specify where NRELPy should look for data.
 
     Returns
     -------
-    df : pandas.DataFrame
+    df : :class:`pandas.DataFrame`
         A pandas dataframe containing the stored data.
     """
-    if pickled:
-        ext = 'pkl'
-    else:
-        ext = 'csv'
-
-    if year:
-        file_name = f'{db_opts[database]}_{str(year)}.{ext}'
-    else:
-        file_name = f'{db_opts[database]}.{ext}'
-
     if path:
         search_path = Path(path) / file_name
     else:
@@ -73,9 +59,9 @@ def check_stored_data(database, year=None, path=None, pickled=True):
     file_match = glob.glob(str(search_path))
 
     if len(file_match) == 1:
-        if pickled:
+        if '.pkl' in file_name:
             df = pd.read_pickle(file_match[0])
-        else:
+        elif '.csv' in file_name:
             df = pd.read_csv(file_match[0], index_col=[0])
     elif len(file_match) == 0:
         raise FileNotFoundError(
@@ -87,7 +73,7 @@ def check_stored_data(database, year=None, path=None, pickled=True):
     return df
 
 
-def save_local(df, database, year=None, path=None, pickle=True):
+def save_local(df, file_name, year=None, path=None, pickle=True):
     """
     This function saves a dataframe in the package data or to a
     locally defined path. It automatically generates a file name
@@ -113,10 +99,6 @@ def save_local(df, database, year=None, path=None, pickle=True):
         the `dill` package. Otherwise, it will be saved as a
         `.csv` file. Default is True.
     """
-    if year:
-        file_name = f'{db_opts[database]}_{str(year)}'
-    else:
-        file_name = f'{db_opts[database]}'
     if path:
         file_path = Path(path).resolve()
     else:

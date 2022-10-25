@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 import pandas as pd
-
+from .utils.data_io import save_local
 
 with open("C:/Users/samgd/Research/nrel_api_key.txt", 'r') as file:
     key = file.readlines()[0]
@@ -200,24 +200,6 @@ def make_nrel_url(parameters, personal_data, kind='solar', format="csv"):
     interval = int(parameters['interval'])
     utc = str(parameters['utc']).lower()
 
-    # url = ("https://developer.nrel.gov/{db}.{format}?wkt={wkt}&names={year}"
-    #        "&leap_day={leap}&interval={interval}&utc={utc}&full_name={name}"
-    #        "&email={email}&affiliation={affiliation}&mailing_list={mailing_list}"
-    #        "&reason={reason}&api_key={api}&attributes={attr}").format(db=db_to_access,
-    #                                                                   wkt=wkt,
-    #                                                                   year=year,
-    #                                                                   leap=leap_day,
-    #                                                                   interval=interval,
-    #                                                                   utc=utc,
-    #                                                                   name=name,
-    #                                                                   email=email,
-    #                                                                   affiliation=affiliation,
-    #                                                                   mailing_list=mailing_list,
-    #                                                                   reason=reason,
-    #                                                                   api=key,
-    #                                                                   attr=attributes,
-    #                                                                   format=format)
-
     url = (
         f"https://developer.nrel.gov/{db_to_access}.{format}?wkt={wkt}&names={year}"
         f"&leap_day={leap_day}&interval={interval}&utc={utc}&full_name={name}"
@@ -228,8 +210,8 @@ def make_nrel_url(parameters, personal_data, kind='solar', format="csv"):
 
 
 def get_nrel_data(
-        lat,
-        lon,
+        lats,
+        lons,
         years,
         database,
         parameters=PARAMETERS,
@@ -253,21 +235,23 @@ def get_nrel_data(
         The dictionary of personal data.
     """
     frames = []
-    for y in list(years):
-        parameters['year'] = y
-        url = make_nrel_url(parameters=parameters,
-                            personal_data=personal_data,
-                            kind=database)
-        if database == 'solar':
-            df = pd.read_csv(url, skiprows=2)
-        elif database == 'wind':
-            df = pd.read_csv(url, skiprows=1)
-        # breakpoint()
-        cols = ['Year', 'Month', 'Day', 'Hour', 'Minute']
-        df['time'] = pd.to_datetime(df[cols])
-        df.drop(columns=cols, inplace=True)
-        df.set_index('time', inplace=True)
-        frames.append(df)
+    for lat, lon in zip(list(lats), list(lons)):
+        parameters['lon'] = lon
+        parameters['lat'] = lat
+        for y in list(years):
+            parameters['year'] = y
+            url = make_nrel_url(parameters=parameters,
+                                personal_data=personal_data,
+                                kind=database)
+            if database == 'solar':
+                df = pd.read_csv(url, skiprows=2)
+            elif database == 'wind':
+                df = pd.read_csv(url, skiprows=1)
+            cols = ['Year', 'Month', 'Day', 'Hour', 'Minute']
+            df['time'] = pd.to_datetime(df[cols])
+            df.drop(columns=cols, inplace=True)
+            df.set_index('time', inplace=True)
+            frames.append(df)
     full_df = pd.concat(frames, axis=0)
 
     return full_df
