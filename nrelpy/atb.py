@@ -1,13 +1,9 @@
 from urllib.error import HTTPError
 import pandas as pd
-<<<<<<< HEAD
 from nrelpy.utils.data_io import (check_stored_data, 
                                 save_local, 
                                 generate_db_filename)
-=======
 import numpy as np
-from nrelpy.utils.data_io import check_stored_data, save_local
->>>>>>> 6c50892a0cc05997958c39ffb4e26a95678df4de
 
 
 def as_dataframe(year, database, verbose=False, **kwargs):
@@ -28,6 +24,8 @@ def as_dataframe(year, database, verbose=False, **kwargs):
     df : pandas.DataFrame
         The ATB data as a pandas dataframe.
     """
+
+    file_name = generate_db_filename(database=database, year=year, ext='csv')
 
     try:
         df = check_stored_data(database=database, year=year)
