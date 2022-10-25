@@ -25,10 +25,10 @@ def as_dataframe(year, database, verbose=False, **kwargs):
         The ATB data as a pandas dataframe.
     """
 
-    file_name = generate_db_filename(database=database, year=year, ext='csv')
+    file_name = generate_db_filename(database=database, year=year)
 
     try:
-        df = check_stored_data(database=database, year=year)
+        df = check_stored_data(file_name)
     except FileNotFoundError:
         atb_urls = {
             'electricity': f'https://oedi-data-lake.s3.amazonaws.com/ATB/electricity/csv/{year}/ATBe.csv',
@@ -59,7 +59,7 @@ def as_dataframe(year, database, verbose=False, **kwargs):
             print(err.code, fail_str)
             raise
 
-        save_local(df, database=database, year=year)
+        save_local(df, file_name)
 
     return df
 

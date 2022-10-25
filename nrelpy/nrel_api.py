@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 import pandas as pd
-from .utils.data_io import save_local
+from utils.data_io import generate_db_filename, save_local, check_stored_data
 
 with open("C:/Users/samgd/Research/nrel_api_key.txt", 'r') as file:
     key = file.readlines()[0]
@@ -163,7 +163,7 @@ def make_nrel_url(parameters, personal_data, kind='solar', format="csv"):
         Indicates data download format. Accepts either 'csv' or
         'json' strings. Default is 'csv.'
 
-    .. warning:
+    .. warning::
         Only a json format allows simultaneous download of many locations
         and years simultaneously.
 
@@ -233,11 +233,29 @@ def get_nrel_data(
         The parameters that indicate a unique data request.
     personal_data : dict
         The dictionary of personal data.
+
+    Returns
+    -------
+    full_df : :class:`pandas.DataFrame`
+        The combined dataframe for all years aligned along axis=0.
+    
+    .. warning::
+        It is not recommended to pass multiple points in a single function
+        call. This will create non-deterministic behavior.
+
+
     """
-    frames = []
-    for lat, lon in zip(list(lats), list(lons)):
-        parameters['lon'] = lon
-        parameters['lat'] = lat
+    parameters['lon'] = lons
+    parameters['lat'] = lats
+    file_name = generate_db_filename(database=database, 
+                                    year=years, 
+                                    lon=lons, 
+                                    lat=lats,
+                                    pickled=False)
+    try:
+        full_df = check_stored_data(file_name)
+    except FileNotFoundError:
+        frames = []
         for y in list(years):
             parameters['year'] = y
             url = make_nrel_url(parameters=parameters,
@@ -252,7 +270,8 @@ def get_nrel_data(
             df.drop(columns=cols, inplace=True)
             df.set_index('time', inplace=True)
             frames.append(df)
-    full_df = pd.concat(frames, axis=0)
+        full_df = pd.concat(frames, axis=0)
+        save_local(full_df, file_name=file_name)
 
     return full_df
 
@@ -281,4 +300,4 @@ if __name__ == "__main__":
     PARAMETERS['attr_list'] = AVAILABLE_ATTRIBUTES[db]
     df = get_nrel_data(40.09, -88.26, years, db, PARAMETERS, PERSONAL_DATA)
 
-    df.to_csv(f'../data//nrel_data_{db}.csv')
+    # df.to_csv(f'../data//nrel_data_{db}.csv')
