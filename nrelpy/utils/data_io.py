@@ -114,7 +114,7 @@ def save_local(df, file_name, path=None):
         file_path = DATA_PATH
 
     if '.pkl' in file_name:
-        with open(file_path / f'{file_name}.pkl', 'wb') as f:
+        with open(file_path / f'{file_name}', 'wb') as f:
             dill.dump(df, f)
     elif (isinstance(df, pd.DataFrame) and ('.csv' in file_name)):
         df.to_csv(file_path / f'{file_name}')
