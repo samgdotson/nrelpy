@@ -1,6 +1,8 @@
 from nrelpy.atb import as_dataframe, ATBe
+import pandas as pd
 from urllib.error import HTTPError
 import pytest
+import numpy as np
 
 good_year = 2020
 bad_year = -999
@@ -85,39 +87,48 @@ def test_as_dataframe_bad_database():
 
 
 def test_ATB_init():
-
-    atb_class = ATBe(year=2022)
-
-    assert atb_class.scenario == 'Moderate'
-    assert atb_class.case == 'R&D'
-    assert atb_class.year == 2022
-    assert atb_class.dataframe.scenario.unique() == ['Moderate']
+    atb_class = ATBe(year=good_year)
+    assert atb_class.year == good_year
+    
+    with pytest.raises(HTTPError) as e:
+        atb_class = ATBe(bad_year)
+        
+    with pytest.raises(HTTPError) as e:
+        atb_class = ATBe(nonexistent_year)
 
     return
 
-def test_ATB_scenario_change():
+
+def test_ATB_acronyms():
     
-    atb_class = ATBe(year=2022)
-
-    assert atb_class.dataframe.scenario.unique() == ['Moderate']
-    assert atb_class.dataframe.core_metric_case.unique() == ['R&D']
-
-    atb_class.scenario = 'Advanced'
-    atb_class.case = 'Market'
-    assert atb_class.dataframe.scenario.unique() == ['Advanced']
-    assert atb_class.dataframe.core_metric_case.unique() == ['Market']
-
+    atb_class = ATBe(2023)
+    assert isinstance(atb_class.acronyms, pd.DataFrame)
+    
+    with pytest.warns(RuntimeWarning) as w:
+        atb_class = ATBe(good_year)
+        acros_df = atb_class.acronyms
+    
+    return
 
 
-atb_class = ATBe(year=2022)
-def test_ATB_get_data_good_values():
-    exp_value = 7988.95108
-    actual_value = atb_class.get_data(good_tech, good_metric, good_detail)
-    assert (abs(exp_value - actual_value) < 1e-5)
+def test_ATB_access():
+    atb_class = ATBe(good_year)
+    
+    subset = atb_class(technology='Nuclear')
+    assert subset.shape == (6534,2)
+    return
+    
+def test_ATB_value_access():
+    atbe2020 = ATBe(good_year)
+    mask = (
+        (atbe2020.raw_dataframe['technology']=='Nuclear')&
+        (atbe2020.raw_dataframe['core_metric_parameter']=='LCOE')&
+        (atbe2020.raw_dataframe['core_metric_case']=='Market')&
+        (atbe2020.raw_dataframe['core_metric_variable']==2020)&
+        (atbe2020.raw_dataframe['crpyears']==20)
+        )
+    value = atbe2020.raw_dataframe[mask]['value'].values[0]
+    assert np.isclose(value, 88.22242)
+    
 
-def test_ATB_get_data_bad_values():
-    with pytest.raises(AssertionError):
-        atb_class.get_data(bad_tech, good_metric, good_detail)
-        atb_class.get_data(good_tech, bad_metric, good_detail)
-        atb_class.get_data(good_tech, good_metric, bad_detail)
 
