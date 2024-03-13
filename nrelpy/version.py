@@ -53,4 +53,4 @@ REQUIRES = [
     'dill',
     'openpyxl',
     'pathlib']
-PYTHON_REQUIRES = ">= 3.6"
+PYTHON_REQUIRES = ">= 3.7"
