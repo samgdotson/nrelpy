@@ -2,6 +2,7 @@ from urllib.error import HTTPError
 import pandas as pd
 import numpy as np
 from nrelpy.utils.data_io import check_stored_data, save_local
+import warnings
 
 pd.set_option('display.max_columns', None)
 
@@ -150,12 +151,30 @@ class ATBe(object):
         acronyms : :class:`pandas.DataFrame`
             A dataframe of acronyms.
         """
-        acro_df = pd.read_html(f"https://atb.nrel.gov/electricity/{self.year}/acronyms")[0]
-        acro_df.cols = ['acronym','long name']
-        acro_df.set_index("acronym", inplace=True, drop=True)
+        acro_df = None
+        try:
+            acro_df = pd.read_html(f"https://atb.nrel.gov/electricity/{self.year}/acronyms")[0]
+            acro_df.columns = ['acronym','long name']
+            acro_df.set_index("acronym", inplace=True, drop=True)
+        except HTTPError as e:
+            msg = f"Year {self.year} not in [2021,2022,2023]."
+            warnings.warn(msg, RuntimeWarning)
         
         return acro_df
+    
+    @property
+    def variable_units(self):
+        """
+        A dictionary with the variables as keys and the units as values.
+        """
+        metrics = self.raw_dataframe['core_metric_parameter'].values
+        units = self.raw_dataframe['units'].values
+        unit_df = pd.DataFrame.from_dict(dict(zip(metrics,units)), 
+                                         orient='index', 
+                                         columns=['units']).dropna(axis=0)
         
+        return unit_df
+   
         
 def _atbe_formatter(df, year):
     """
