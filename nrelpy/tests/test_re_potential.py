@@ -11,7 +11,7 @@ def test_as_dataframe_standard():
 
     df = as_dataframe()
 
-    assert type(df) == pd.DataFrame
+    assert isinstance(df, pd.DataFrame)
 
     return
 
@@ -24,7 +24,7 @@ def test_as_dataframe_bad_url():
 
     bad_url = "https://www.nrel.gov/gis/assets/docs/us-re-technical-potential"
     with pytest.raises(HTTPError) as e:
-        df = as_dataframe(url=bad_url)
+        as_dataframe(url=bad_url)
 
     return
 
@@ -32,11 +32,11 @@ def test_as_dataframe_bad_url():
 @pytest.mark.filterwarnings("ignore")
 def test_as_dataframe_verbose():
     """
-    This tests the verbosity setting of 
+    This tests the verbosity setting of
     """
 
     df = as_dataframe(verbose=True)
 
-    assert type(df) == pd.DataFrame
+    assert isinstance(df, pd.DataFrame)
 
     return

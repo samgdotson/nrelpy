@@ -1,6 +1,5 @@
 from urllib.error import HTTPError
 import pandas as pd
-import numpy as np
 from nrelpy.utils.data_io import check_stored_data, save_local
 import warnings
 
@@ -48,7 +47,7 @@ def as_dataframe(year, database, verbose=False, **kwargs):
                 print(f"Dropping column {drop_col}")
             try:
                 df.drop(columns=drop_col, inplace=True)
-            except KeyError as err:
+            except KeyError:
                 if verbose:
                     print(f'No column {drop_col}.')
                 else:
@@ -136,7 +135,7 @@ class ATBe(object):
         try:
             key_list = self.dataframe.index.get_level_values(
                 key).unique().to_list()
-        except KeyError as err:
+        except KeyError:
             msg = f"Key not found. Try one of {print(self.index_names)}"
             raise KeyError(msg)
 
@@ -159,7 +158,7 @@ class ATBe(object):
                 f"https://atb.nrel.gov/electricity/{self.year}/acronyms")[0]
             acro_df.columns = ['acronym', 'long name']
             acro_df.set_index("acronym", inplace=True, drop=True)
-        except HTTPError as e:
+        except HTTPError:
             msg = f"Year {self.year} not in [2021,2022,2023]."
             warnings.warn(msg, RuntimeWarning)
 

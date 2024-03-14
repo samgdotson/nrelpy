@@ -1,19 +1,17 @@
-from nrelpy.utils.data_io import save_local, check_stored_data, DATA_PATH
-from pathlib import Path
-import sys
+from nrelpy.utils.data_io import save_local, check_stored_data, DATA_PATH   
 import os
 import glob
 import pandas as pd
 
 # set up test data
 data = {'tech': ['nuclear', 'solar', 'wind', 'naturalgas'],
-            'variable_cost': [20, 0, 0, 180],  # $/GWh
-            'fixed_cost': [92, 4, 11, 21],
-            'capital_cost': [5.9, 0.8, 1.4, 1.0],
-            'capacity_GW': [12, 3, 7, 5],
-            'capacity_factor': [0.93, 0.17, 0.33, 0.45],
-            'resentment': [100, 20, 50, 70]
-            }
+        'variable_cost': [20, 0, 0, 180],  # $/GWh
+        'fixed_cost': [92, 4, 11, 21],
+        'capital_cost': [5.9, 0.8, 1.4, 1.0],
+        'capacity_GW': [12, 3, 7, 5],
+        'capacity_factor': [0.93, 0.17, 0.33, 0.45],
+        'resentment': [100, 20, 50, 70]
+        }
 tech_df = pd.DataFrame(data)
 
 db = 'electricity'
@@ -36,6 +34,7 @@ def test_save_local_case1():
     os.remove(file_name)
     assert len(files) == 1
     return
+
 
 def test_save_local_case2():
     """
