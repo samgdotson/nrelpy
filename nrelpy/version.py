@@ -52,5 +52,6 @@ REQUIRES = [
     'pytest',
     'dill',
     'openpyxl',
-    'pathlib']
+    'pathlib',
+    'lxml']
 PYTHON_REQUIRES = ">= 3.7"
