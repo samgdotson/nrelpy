@@ -79,11 +79,11 @@ class ATBe(object):
         ----------
         year : int
             Specifies the ATB year
-            
+
         Examples
         --------
         The ATBe class makes it easy to access data from the ATBe.
-        
+
         >>> from nrelpy.atb import ATBe
         >>> atbe = ATBe(2023)
         >>> atbe.get_index_values('technology')
@@ -101,13 +101,13 @@ class ATBe(object):
         'OffShoreWind',
         'ResPV',
         'UtilityPV']
-        
+
         You can filter data from the ATBe simply passing an index and value
-        
+
         >>> atbe(technology='Nuclear')
-        
+
         or passing an unpacked dictionary
-        
+
         >>> opts = {'technology':'Nuclear',
         >>>         'core_metric_parameter':'LCOE',
         >>>         'core_metric_variable':2024}
@@ -115,36 +115,38 @@ class ATBe(object):
         """
         self.year = year
         self.database = 'electricity'
-        self.raw_dataframe = as_dataframe(year=self.year, database=self.database)
+        self.raw_dataframe = as_dataframe(
+            year=self.year, database=self.database)
         self.dataframe = _atbe_formatter(self.raw_dataframe, self.year)
-        
+
         self.index_names = list(self.dataframe.index.names)
-        
+
     def __call__(self, **kwargs):
-        cases = {key:slice(None) for key in self.index_names}
+        cases = {key: slice(None) for key in self.index_names}
         for k, v in kwargs.items():
             cases[k] = v
         data_slice = tuple(cases.values())
-        
+
         selection = self.dataframe.xs(data_slice).dropna(axis=1, how='all')
-        
+
         return selection
-    
+
     def get_index_values(self, key):
-        
+
         try:
-            key_list = self.dataframe.index.get_level_values(key).unique().to_list()
+            key_list = self.dataframe.index.get_level_values(
+                key).unique().to_list()
         except KeyError as err:
             msg = f"Key not found. Try one of {print(self.index_names)}"
             raise KeyError(msg)
-        
+
         return key_list
 
     @property
     def acronyms(self):
         """
         Retrieves a dataset with the long form of acronyms in the `ATBe`.
-        Only valid for years in [2021, 2022, 2023].    
+        Only valid for years in [2021, 2022, 2023].
 
         Returns
         -------
@@ -153,15 +155,16 @@ class ATBe(object):
         """
         acro_df = None
         try:
-            acro_df = pd.read_html(f"https://atb.nrel.gov/electricity/{self.year}/acronyms")[0]
-            acro_df.columns = ['acronym','long name']
+            acro_df = pd.read_html(
+                f"https://atb.nrel.gov/electricity/{self.year}/acronyms")[0]
+            acro_df.columns = ['acronym', 'long name']
             acro_df.set_index("acronym", inplace=True, drop=True)
         except HTTPError as e:
             msg = f"Year {self.year} not in [2021,2022,2023]."
             warnings.warn(msg, RuntimeWarning)
-        
+
         return acro_df
-    
+
     @property
     def variable_units(self):
         """
@@ -169,13 +172,13 @@ class ATBe(object):
         """
         metrics = self.raw_dataframe['core_metric_parameter'].values
         units = self.raw_dataframe['units'].values
-        unit_df = pd.DataFrame.from_dict(dict(zip(metrics,units)), 
-                                         orient='index', 
+        unit_df = pd.DataFrame.from_dict(dict(zip(metrics, units)),
+                                         orient='index',
                                          columns=['units']).dropna(axis=0)
-        
+
         return unit_df
-   
-        
+
+
 def _atbe_formatter(df, year):
     """
     Creates a pivot table for the ATBe
@@ -186,13 +189,13 @@ def _atbe_formatter(df, year):
         raw ATBe dataframe.
     year : int
         The ATBe year.
-    
+
     Returns
     -------
     pivoted : :class:`pandas.DataFrame`
         A pivoted dataframe.
     """
-    
+
     pivoted = df.pivot_table(index=ATBe_INDEXES[year],
                              columns=ATBe_COLUMNS[year],
                              values='value'
@@ -200,46 +203,47 @@ def _atbe_formatter(df, year):
 
     return pivoted
 
+
 ATBe_INDEXES = {
-                2019:['core_metric_case', 
-                      'crpyears', 
-                      'scenario',
-                      'technology', 
-                      'core_metric_parameter',
-                      'core_metric_variable'],
-                2020:['core_metric_case', 
-                      'crpyears', 
-                      'scenario', 
-                      'technology', 
-                      'core_metric_parameter',
-                      'core_metric_variable'],
-                2021:['core_metric_case', 
-                      'crpyears', 
-                      'scenario',
-                      'technology',
-                      'core_metric_parameter',
-                      'core_metric_variable'],
-                2022:['core_metric_case', 
-                      'crpyears', 
-                      'scenario',
-                      'technology',
-                      'core_metric_parameter',
-                      'core_metric_variable'],
-                2023:['core_metric_case',
-                      'crpyears',
-                      'maturity',
-                      'scale',
-                      'scenario',
-                      'technology',
-                      'core_metric_parameter',
-                      'core_metric_variable',
-                      ],
-                }
+    2019: ['core_metric_case',
+           'crpyears',
+           'scenario',
+           'technology',
+           'core_metric_parameter',
+           'core_metric_variable'],
+    2020: ['core_metric_case',
+           'crpyears',
+           'scenario',
+           'technology',
+           'core_metric_parameter',
+           'core_metric_variable'],
+    2021: ['core_metric_case',
+           'crpyears',
+           'scenario',
+           'technology',
+           'core_metric_parameter',
+           'core_metric_variable'],
+    2022: ['core_metric_case',
+           'crpyears',
+           'scenario',
+           'technology',
+           'core_metric_parameter',
+           'core_metric_variable'],
+    2023: ['core_metric_case',
+           'crpyears',
+           'maturity',
+           'scale',
+           'scenario',
+           'technology',
+           'core_metric_parameter',
+           'core_metric_variable',
+           ],
+}
 
 ATBe_COLUMNS = {
-                2019:'techdetail',
-                2020:'techdetail',
-                2021:'display_name',
-                2022:'display_name',
-                2023:'display_name',
-                }
+    2019: 'techdetail',
+    2020: 'techdetail',
+    2021: 'display_name',
+    2022: 'display_name',
+    2023: 'display_name',
+}
